@@ -1,0 +1,17 @@
+﻿services:
+  hometrackapi_be:
+    container_name: hometrackapi-be
+    image: hometrackapibe:latest   
+    build:
+      context: .
+      dockerfile: HomeTrackAPI_BE/Dockerfile
+    ports:
+      - "5000:5000"                
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+    networks:
+      - hometrack
+
+networks:
+  hometrack:
+    driver: bridge
