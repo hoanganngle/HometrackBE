@@ -8,7 +8,6 @@ namespace BusinessObject.DTO.Auth
 {
     public class LoginResult
     {
-        //trả về token sau khi đăng nhập thành công
         public string Token { get; set; } = default!;
         public string Username { get; set; } = default!;
         public long RoleId { get; set; } = default!;

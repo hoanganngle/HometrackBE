@@ -49,7 +49,7 @@ namespace HomeTrackAPI_BE.Controllers
             return Ok(result); 
         }
 
-        [HttpPost("AddRole")] // chưa có role thì add role, mặc định là User
+        [HttpPost("AddRole")]
         [Authorize]
         public async Task<IActionResult> AddRole([FromBody] CreateRoleRequest request)
         {
@@ -77,7 +77,7 @@ namespace HomeTrackAPI_BE.Controllers
             return Ok(await _service.GetAllRolesAsync());
         }
 
-        [HttpPost("check-otp-email")] // kiểm tra otp
+        [HttpPost("check-otp-email")]
         public async Task<IActionResult> checkOtp([FromBody] CheckOtpRequest CheckOtpRequest)
         {
             try
@@ -95,7 +95,7 @@ namespace HomeTrackAPI_BE.Controllers
             }
         }
 
-        [HttpPost("send-otp-email")] //gửi otp qua email
+        [HttpPost("send-otp-email")]
         public async Task<IActionResult> SendOTPToEmail([FromBody] SendOtpEmailRequest sendOtpEmailRequest)
         {
             try
@@ -111,6 +111,14 @@ namespace HomeTrackAPI_BE.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPut("{userId:guid}")]
+        public async Task<IActionResult> ActiveUser(Guid userId, CancellationToken ct)
+        {
+            var ok = await _service.SetStatusAsync(userId, ct);
+            if (!ok) return NotFound(new { message = "User not found" });
+            return Ok("Cập nhập trạng thái tài khoản thành công!");
         }
     }
 }

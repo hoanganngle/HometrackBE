@@ -8,7 +8,6 @@ namespace BusinessObject.DTO.Auth
 {
     public class CreateRoleRequest
     {
-        //kiểm tra role name 
         public string RoleName { get; set; } = default!;
     }
 }

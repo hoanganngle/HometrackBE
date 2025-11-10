@@ -35,5 +35,7 @@ namespace BusinessObject.Models
         public bool? IsPremium { get; set; }
         public bool? IsEmailVerified { get; set; }
         public DateTime? OtpGeneratedAt { get; set; }
+
+        public ICollection<House> Houses { get; set; } = new List<House>();
     }
 }

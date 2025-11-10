@@ -19,5 +19,6 @@ namespace Repo.IRepository
         Task<OTPEmail> AddOTPEmail(OTPEmail otpemail);
         Task<User> GetUserByUserID(Guid? userId);
         Task SetPremiumOffAsync(IEnumerable<Guid> userIds);
+
     }
 }

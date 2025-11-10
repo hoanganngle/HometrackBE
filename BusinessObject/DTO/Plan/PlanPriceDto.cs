@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO.Plan
 {
-    //set giá gói, các thuộc tính của gói 
     public class PlanPriceDto
     {
         public Guid PlanPriceId { get; set; }

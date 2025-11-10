@@ -8,7 +8,6 @@ namespace BusinessObject.DTO.Auth
 {
     public class ApiResult<T>
     {
-        //Kiểm tra gọi API có thành công hay không
         public bool Success { get; set; }
         public string? Error { get; set; }
         public T? Data { get; set; }

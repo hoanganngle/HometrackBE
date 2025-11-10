@@ -25,7 +25,7 @@ namespace HomeTrackAPI_BE.Controllers
         public async Task<IActionResult> GetOrderById(Guid orderId)
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
-            if (order == null) return NotFound("Không tìm thấy đơn hàng!"); //trả về message
+            if (order == null) return NotFound("Không tìm thấy đơn hàng!");
 
             return Ok(order);
         }

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO.Order
 {
-    //các đối tượng mà liên quan đến đơn hàng
     public class OrderDTO
     {
         public Guid Id { get; set; }

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO.Email
 {
-    //kiểm tra otp
     public class CheckOtpRequest
     {
         [Required]

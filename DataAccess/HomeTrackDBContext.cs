@@ -6,7 +6,6 @@ using System;
 
 namespace DataAccess
 {
-    // Chốt tên chung cho các version DB "HomeTrackDBContext"
     public class HomeTrackDBContext : DbContext
     {
         public HomeTrackDBContext(DbContextOptions<HomeTrackDBContext> options) : base(options) { }
@@ -30,7 +29,7 @@ namespace DataAccess
         public DbSet<Role> Roles { get; set; }
         public DbSet<OTPEmail> OTPEmails { get; set; }
 
-        // DbSet billing (ver 1,0 đang có 8 bảng, có thể remove Refunds nếu out of scope)
+        // DbSet billing (8 bảng)
         public DbSet<Plan> Plans => Set<Plan>();
         public DbSet<PlanPrice> PlanPrices => Set<PlanPrice>();
         public DbSet<Subscription> Subscriptions => Set<Subscription>();
@@ -39,6 +38,14 @@ namespace DataAccess
         public DbSet<Refund> Refunds => Set<Refund>();
         public DbSet<Invoice> Invoices => Set<Invoice>();
         public DbSet<WebhookLog> WebhookLogs => Set<WebhookLog>();
+        public DbSet<House> Houses => Set<House>();
+        public DbSet<Floor> Floors => Set<Floor>();
+        public DbSet<Room> Rooms => Set<Room>();
+        public DbSet<RoomItem> RoomItems => Set<RoomItem>();
+        public DbSet<RoomItemInRoom> RoomItemInRooms => Set<RoomItemInRoom>();
+        public DbSet<SubItem> SubItems => Set<SubItem>();
+        public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+        public DbSet<ChatSession> ChatSessions => Set<ChatSession>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,11 +53,13 @@ namespace DataAccess
             modelBuilder.Entity<Role>().ToTable("Role");
             modelBuilder.Entity<OTPEmail>().ToTable("OTPEmail");
 
-            // GUID mặc định (không đổi)
+            // GUID mặc định
             modelBuilder.Entity<User>().Property(u => u.UserId).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<OTPEmail>().Property(x => x.Id).HasDefaultValueSql("NEWID()");
+            modelBuilder.Entity<ChatMessage>().Property(x => x.Id).HasDefaultValueSql("NEWID()");
+            modelBuilder.Entity<ChatSession>().Property(x => x.Id).HasDefaultValueSql("NEWID()");
 
-            // Quan hệ User-Role
+            // Quan hệ User-Role (đã có)
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
                 .WithMany(r => r.Users)
@@ -60,7 +69,7 @@ namespace DataAccess
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<User>().Property(u => u.Username).HasMaxLength(255);
 
-            // ===== Plans (gói)=====
+            // ===== Plans =====
             modelBuilder.Entity<Plan>(e =>
             {
                 e.ToTable("Plans");
@@ -72,7 +81,7 @@ namespace DataAccess
                 e.Property(x => x.IsActive).HasDefaultValue(true);
             });
 
-            // ===== PlanPrices (giá gói cac thứ)=====
+            // ===== PlanPrices =====
             modelBuilder.Entity<PlanPrice>(e =>
             {
                 e.ToTable("PlanPrices");
@@ -166,7 +175,7 @@ namespace DataAccess
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // ===== Refunds (1-1 với PaymentTransaction) (có thể remove do out of scope)=====
+            // ===== Refunds (1-1 với PaymentTransaction) =====
             modelBuilder.Entity<Refund>(e =>
             {
                 e.ToTable("Refunds");
@@ -182,7 +191,7 @@ namespace DataAccess
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // ===== Invoices (rela 1-1 với PaymentTransactions) =====
+            // ===== Invoices (1-1 với PaymentTransaction) =====
             modelBuilder.Entity<Invoice>(e =>
             {
                 e.ToTable("Invoices");
@@ -195,7 +204,7 @@ namespace DataAccess
                 e.Property(x => x.TaxVnd).IsRequired();
                 e.Property(x => x.TotalVnd).IsRequired();
 
-                // khoá ngoại cho người mua
+                // FK tới User (người mua)
                 e.HasOne<User>()
                  .WithMany()
                  .HasForeignKey(x => x.UserId)
@@ -207,7 +216,7 @@ namespace DataAccess
                  .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // ===== WebhookLogs (based on Fluent API) =====
+            // ===== WebhookLogs =====
             modelBuilder.Entity<WebhookLog>(e =>
             {
                 e.ToTable("WebhookLogs");
@@ -220,6 +229,118 @@ namespace DataAccess
                 e.HasIndex(x => x.OrderCode);
                 e.HasIndex(x => x.ProviderTransactionId);
             });
+
+            modelBuilder.Entity<House>(e =>
+            {
+                e.ToTable("House");
+                e.HasKey(x => x.HouseId);
+                e.Property(x => x.HouseId).HasDefaultValueSql("NEWID()");
+                e.Property(x => x.Name).HasMaxLength(255).IsRequired();
+
+                e.HasOne(x => x.User)
+                    .WithMany(u => u.Houses)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasIndex(x => x.UserId);
+            });
+
+            // --- Floor ---
+            modelBuilder.Entity<Floor>(e =>
+            {
+                e.ToTable("Floor");
+                e.HasKey(x => x.FloorId);
+                e.Property(x => x.FloorId).HasDefaultValueSql("NEWID()");
+                e.Property(x => x.Name).HasMaxLength(255).IsRequired();
+
+                e.HasOne(x => x.House)
+                    .WithMany(h => h.Floors)
+                    .HasForeignKey(x => x.HouseId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // mỗi tầng duy nhất trong cùng 1 house
+                e.HasIndex(x => new { x.HouseId, x.Level }).IsUnique();
+                e.HasIndex(x => x.HouseId);
+            });
+
+            // --- Room ---
+            modelBuilder.Entity<Room>(e =>
+            {
+                e.ToTable("Room");
+                e.HasKey(x => x.RoomId);
+                e.Property(x => x.RoomId).HasDefaultValueSql("NEWID()");
+                e.Property(x => x.Name).HasMaxLength(255).IsRequired();
+                e.Property(x => x.Type).HasMaxLength(50).IsRequired();
+
+                e.HasOne(x => x.Floor)
+                    .WithMany(f => f.Rooms)
+                    .HasForeignKey(x => x.FloorId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasIndex(x => x.FloorId);
+            });
+
+            // --- RoomItem ---
+            modelBuilder.Entity<RoomItem>(e =>
+            {
+                e.ToTable("RoomItem");
+                e.HasKey(x => x.RoomItemId);
+                e.Property(x => x.RoomItemId).HasDefaultValueSql("NEWID()");
+                e.Property(x => x.Item).HasMaxLength(100).IsRequired();
+
+                // THÊM DÒNG NÀY
+                e.Property(x => x.SubName).HasMaxLength(200);
+
+                e.Property(x => x.RoomType).HasMaxLength(50);
+                e.HasIndex(x => x.Item);
+
+            });
+
+            // RoomItemInRooms (n–n Room <-> RoomItem)
+            modelBuilder.Entity<RoomItemInRoom>(e =>
+            {
+                e.ToTable("RoomItemInRooms");
+                e.Property(x => x.RoomItemId).HasDefaultValueSql("NEWID()");
+                e.HasKey(x => new { x.RoomId, x.RoomItemId });
+
+                e.HasOne(x => x.Room)
+                 .WithMany(r => r.RoomItemPlacements)
+                 .HasForeignKey(x => x.RoomId)
+                 .OnDelete(DeleteBehavior.Cascade);     
+
+                e.HasOne(x => x.RoomItem)
+                 .WithMany(ri => ri.RoomPlacements)
+                 .HasForeignKey(x => x.RoomItemId)
+                 .OnDelete(DeleteBehavior.Restrict);    
+            });
+
+            modelBuilder.Entity<SubItem>()
+            .HasOne(s => s.Placement)
+            .WithMany(p => p.SubItems)
+            .HasForeignKey(s => new { s.RoomId, s.RoomItemId })
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RoomItem>()
+        .Property(x => x.DefaultX)
+        .HasPrecision(18, 2);   // hoặc .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<RoomItem>()
+                .Property(x => x.DefaultY)
+                .HasPrecision(18, 2);
+
+            // RoomItemInRoom (placement)
+            modelBuilder.Entity<RoomItemInRoom>()
+                .Property(x => x.X)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<RoomItemInRoom>()
+                .Property(x => x.Y)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ChatSession>()
+            .HasMany(s => s.Messages)
+            .WithOne(m => m.ChatSession)
+            .HasForeignKey(m => m.ChatSessionId);
         }
     }
 }

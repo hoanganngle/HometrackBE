@@ -8,7 +8,6 @@ namespace BusinessObject.DTO.Auth
 {
     public class LoginRequest
     {
-        //request đăng nhập
         public string Email { get; set; }
         public string Password { get; set; }
     }

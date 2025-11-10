@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO.Order
 {
-    //tạo đơn hàng
     public class CreateOrderRequest
     {
         public Guid PlanPriceId { get; set; }

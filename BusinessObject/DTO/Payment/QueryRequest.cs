@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO.Payment
 {
-    // Gửi yêu cầu tạo query thanh toán
     public class QueryRequest
     {
         public string? Paymentlink { get; set; }

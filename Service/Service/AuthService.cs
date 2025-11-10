@@ -149,5 +149,26 @@ namespace Service.Service
             var user = await _usersRepository.GetUserByUserID(userId);
             return user;
         }
+
+        public async Task<bool> SetStatusAsync(Guid userId, CancellationToken ct = default)
+        {
+            
+
+            var user = await _usersRepository.GetUserByUserID(userId);
+            if (user == null) return false;
+            if (user.Status != true && user.Status != false) throw new ArgumentOutOfRangeException(nameof(user.Status));
+            if (user.Status == true)
+            {
+                user.Status = false;
+            }
+            else
+            {
+                user.Status = true;
+            }
+                
+            await _usersRepository.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

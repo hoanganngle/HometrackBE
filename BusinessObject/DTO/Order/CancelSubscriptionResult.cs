@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO.Order
 {
-    //trả về kết quả hủy đăng ký
     public class CancelSubscriptionResult
     {
         public bool Success { get; set; }

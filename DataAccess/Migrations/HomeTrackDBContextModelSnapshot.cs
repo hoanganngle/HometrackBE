@@ -22,6 +22,129 @@ namespace DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BusinessObject.Models.ChatMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<Guid>("ChatSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatSessionId");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.ChatSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChatSessions");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.Floor", b =>
+                {
+                    b.Property<Guid>("FloorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HouseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("FloorId");
+
+                    b.HasIndex("HouseId");
+
+                    b.HasIndex("HouseId", "Level")
+                        .IsUnique();
+
+                    b.ToTable("Floor", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.House", b =>
+                {
+                    b.Property<Guid>("HouseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("HouseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("House", (string)null);
+                });
+
             modelBuilder.Entity("BusinessObject.Models.Invoice", b =>
                 {
                     b.Property<Guid>("InvoiceId")
@@ -224,9 +347,6 @@ namespace DataAccess.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -326,6 +446,159 @@ namespace DataAccess.Migrations
                     b.HasKey("RoleId");
 
                     b.ToTable("Role", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.Room", b =>
+                {
+                    b.Property<Guid>("RoomId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FloorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("RoomId");
+
+                    b.HasIndex("FloorId");
+
+                    b.ToTable("Room", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.RoomItem", b =>
+                {
+                    b.Property<Guid>("RoomItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("DefaultX")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DefaultY")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Item")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RoomType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SubName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("RoomItemId");
+
+                    b.HasIndex("Item");
+
+                    b.ToTable("RoomItem", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.RoomItemInRoom", b =>
+                {
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoomItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("X")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Y")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("RoomId", "RoomItemId");
+
+                    b.HasIndex("RoomItemId");
+
+                    b.ToTable("RoomItemInRooms", (string)null);
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.SubItem", b =>
+                {
+                    b.Property<Guid>("SubItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUri")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoomItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SubItemType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SubItemId");
+
+                    b.HasIndex("RoomItemId");
+
+                    b.HasIndex("RoomId", "RoomItemId");
+
+                    b.ToTable("SubItem");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Subscription", b =>
@@ -472,6 +745,39 @@ namespace DataAccess.Migrations
                     b.ToTable("WebhookLogs", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessObject.Models.ChatMessage", b =>
+                {
+                    b.HasOne("BusinessObject.Models.ChatSession", "ChatSession")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChatSession");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.Floor", b =>
+                {
+                    b.HasOne("BusinessObject.Models.House", "House")
+                        .WithMany("Floors")
+                        .HasForeignKey("HouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("House");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.House", b =>
+                {
+                    b.HasOne("BusinessObject.Models.User", "User")
+                        .WithMany("Houses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BusinessObject.Models.Invoice", b =>
                 {
                     b.HasOne("BusinessObject.Models.PaymentTransaction", "PaymentTransaction")
@@ -546,6 +852,53 @@ namespace DataAccess.Migrations
                     b.Navigation("PaymentTransaction");
                 });
 
+            modelBuilder.Entity("BusinessObject.Models.Room", b =>
+                {
+                    b.HasOne("BusinessObject.Models.Floor", "Floor")
+                        .WithMany("Rooms")
+                        .HasForeignKey("FloorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Floor");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.RoomItemInRoom", b =>
+                {
+                    b.HasOne("BusinessObject.Models.Room", "Room")
+                        .WithMany("RoomItemPlacements")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObject.Models.RoomItem", "RoomItem")
+                        .WithMany("RoomPlacements")
+                        .HasForeignKey("RoomItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("RoomItem");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.SubItem", b =>
+                {
+                    b.HasOne("BusinessObject.Models.RoomItem", null)
+                        .WithMany("SubItems")
+                        .HasForeignKey("RoomItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObject.Models.RoomItemInRoom", "Placement")
+                        .WithMany("SubItems")
+                        .HasForeignKey("RoomId", "RoomItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Placement");
+                });
+
             modelBuilder.Entity("BusinessObject.Models.Subscription", b =>
                 {
                     b.HasOne("BusinessObject.Models.Plan", "Plan")
@@ -572,6 +925,21 @@ namespace DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.ChatSession", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.Floor", b =>
+                {
+                    b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.House", b =>
+                {
+                    b.Navigation("Floors");
                 });
 
             modelBuilder.Entity("BusinessObject.Models.Order", b =>
@@ -601,9 +969,31 @@ namespace DataAccess.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("BusinessObject.Models.Room", b =>
+                {
+                    b.Navigation("RoomItemPlacements");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.RoomItem", b =>
+                {
+                    b.Navigation("RoomPlacements");
+
+                    b.Navigation("SubItems");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.RoomItemInRoom", b =>
+                {
+                    b.Navigation("SubItems");
+                });
+
             modelBuilder.Entity("BusinessObject.Models.Subscription", b =>
                 {
                     b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("BusinessObject.Models.User", b =>
+                {
+                    b.Navigation("Houses");
                 });
 #pragma warning restore 612, 618
         }

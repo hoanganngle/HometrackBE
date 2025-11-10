@@ -9,7 +9,7 @@ namespace BusinessObject.DTO.Auth
 {
     public class RegisterRequest
     {
-        ///kiểm tra ràng buộc dữ liệu
+        ///kk
         [Required, StringLength(255)]
         public string Username { get; set; } = default!;
 

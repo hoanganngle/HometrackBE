@@ -13,7 +13,7 @@ namespace BusinessObject.DTO.Auth
         public string Email { get; set; } = default!;    // bắt buộc
         public long RoleId { get; set; }                 // bắt buộc
 
-        // optional của user, add sau khi tạo account
+        // tùy chọn
         public string? PictureProfile { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? Phone { get; set; }

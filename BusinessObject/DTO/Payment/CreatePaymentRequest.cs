@@ -13,6 +13,5 @@ namespace BusinessObject.DTO.Payment
         [JsonIgnore]
         public string? Description { get; set; } = "";
 
-        // Số tiền thanh toán (đơn vị: VND)
     }
 }

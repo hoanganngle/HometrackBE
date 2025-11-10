@@ -35,6 +35,6 @@ namespace BusinessObject.DTO.Payment
     string? ProviderTransactionId,
     DateTimeOffset? CreatedAt,
     DateTimeOffset? SucceededAt,
-    string? RawResponse           // thêm trường này để lưu trữ phản hồi thô từ nhà cung cấp thanh toán, cái này cần phải tìm hiểu thêm
+    string? RawResponse           // tuỳ, có thể bỏ nếu không cần
     );
 }

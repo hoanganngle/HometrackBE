@@ -111,7 +111,6 @@ namespace HomeTrackAPI_BE.Controllers
                         </body>
                         </html>";
                     return Content(html, "text/html");
-                    //trả về html message, template FE 
                 }
 
                 return Redirect(FailUrl);

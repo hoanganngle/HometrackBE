@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO.Payment
 {
-    //kiểm tra tình trạng của payment và trả về kết quả PayOSOptions
     public class StatusPayment
     {
         public string code { get; set; }

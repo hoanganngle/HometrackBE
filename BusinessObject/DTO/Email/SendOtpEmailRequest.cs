@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace BusinessObject.DTO.Email
 {
-    //gửi otp qua email
     public class SendOtpEmailRequest
     {
         [Required]

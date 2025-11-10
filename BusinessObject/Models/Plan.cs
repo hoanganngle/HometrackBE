@@ -14,7 +14,6 @@ namespace BusinessObject.Models
         public string? Description { get; set; }
         public bool IsActive { get; set; } = true;
 
-
         public ICollection<PlanPrice> Prices { get; set; } = new List<PlanPrice>();
     }
 }

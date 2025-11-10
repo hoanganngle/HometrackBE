@@ -15,5 +15,7 @@ namespace Service.IService
         Task<IEnumerable<Role>> GetAllRolesAsync();
         Task<User> GetUserByIdAsync(Guid userId);
         Task AddAsync(Role role);
+
+        Task<bool> SetStatusAsync(Guid userId, CancellationToken ct = default);
     }
 }
